@@ -177,8 +177,17 @@ internal object V40 : AGPInterface {
     override val BaseVariant.targetSdkVersion: ApiVersion
         get() = variantData.variantDslInfo.targetSdkVersion
 
-    override val BaseVariant.variantType: VariantType
-        get() = variantData.variantDslInfo.variantType
+    private val BaseVariant.variantType: VariantType
+        get() = variantScope.type
+
+    override val BaseVariant.isApplication: Boolean
+        get() = variantType.isApk
+
+    override val BaseVariant.isLibrary: Boolean
+        get() = variantType.isAar
+
+    override val BaseVariant.isDynamicFeature: Boolean
+        get() = variantType.isDynamicFeature
 
     override val BaseVariant.aar: FileCollection
         get() = getFinalArtifactFiles(InternalArtifactType.AAR)

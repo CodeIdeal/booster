@@ -12,7 +12,6 @@ import com.android.build.gradle.internal.pipeline.TransformTask
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.android.build.gradle.internal.scope.VariantScope
 import com.android.build.gradle.internal.variant.BaseVariantData
-import com.android.builder.core.VariantType
 import com.android.builder.model.ApiVersion
 import com.android.builder.model.Version
 import com.android.repository.Revision
@@ -97,10 +96,15 @@ interface AGPInterface {
 
     val BaseVariant.variantScope: VariantScope
 
+    @Deprecated(
+            message = "Use BaseVariant.namespace instead",
+            replaceWith = ReplaceWith(expression = "variant.namespace"),
+    )
     val BaseVariant.originalApplicationId: String
 
     val BaseVariant.hasDynamicFeature: Boolean
 
+    @Deprecated(message = "Deprecated, don't use it")
     val BaseVariant.rawAndroidResources: FileCollection
 
     val BaseVariant.javaCompilerTaskProvider: TaskProvider<out Task>
@@ -135,7 +139,11 @@ interface AGPInterface {
 
     val BaseVariant.targetSdkVersion: ApiVersion
 
-    val BaseVariant.variantType: VariantType
+    val BaseVariant.isApplication: Boolean
+
+    val BaseVariant.isLibrary: Boolean
+
+    val BaseVariant.isDynamicFeature: Boolean
 
     val BaseVariant.aar: FileCollection
 
@@ -178,6 +186,7 @@ interface AGPInterface {
     )
     val Project.aapt2Enabled: Boolean
 
+    @Suppress("DEPRECATION")
     val Project.isAapt2Enabled: Boolean
         get() = aapt2Enabled
 

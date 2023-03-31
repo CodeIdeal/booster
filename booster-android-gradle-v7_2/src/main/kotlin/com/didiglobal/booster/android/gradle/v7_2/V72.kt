@@ -209,8 +209,17 @@ internal object V72 : AGPInterface {
     override val BaseVariant.targetSdkVersion: ApiVersion
         get() = DefaultApiVersion(component.targetSdkVersion.apiLevel)
 
-    override val BaseVariant.variantType: VariantType
+    private val BaseVariant.variantType: VariantType
         get() = component.variantType
+
+    override val BaseVariant.isApplication: Boolean
+        get() = variantType.isApk
+
+    override val BaseVariant.isLibrary: Boolean
+        get() = variantType.isAar
+
+    override val BaseVariant.isDynamicFeature: Boolean
+        get() = variantType.isDynamicFeature
 
     override val BaseVariant.aar: FileCollection
         get() = getFinalArtifactFiles(SingleArtifact.AAR)
@@ -253,7 +262,7 @@ internal object V72 : AGPInterface {
     override val BaseVariant.allClasses: FileCollection
         get() = when (this) {
             is ApplicationVariant -> getFinalArtifactFiles(InternalArtifactType.JAVAC) + project.files("build${File.separator}tmp${File.separator}kotlin-classes${File.separator}${dirName}")
-            is LibraryVariant -> getFinalArtifactFiles(InternalArtifactType.COMPILE_LIBRARY_CLASSES_JAR)
+            is LibraryVariant -> getFinalArtifactFiles(InternalArtifactType.AAR_MAIN_JAR)
             else -> project.files()
         }
 

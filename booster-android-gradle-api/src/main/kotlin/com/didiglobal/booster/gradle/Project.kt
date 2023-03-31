@@ -18,9 +18,11 @@ import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.Artifact
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.maven.MavenPomArtifact
 import java.io.File
+import java.util.Optional
 import java.util.Stack
 
 /**
@@ -132,12 +134,8 @@ fun Project.getJars(variant: BaseVariant? = null): Set<File> = getJarTaskProvide
 
 fun Project.getJarTaskProviders(variant: BaseVariant? = null): Collection<TaskProvider<out Task>> = when {
     isAndroid -> when (getAndroid<BaseExtension>()) {
-        is LibraryExtension -> filterByVariant(variant).map {
-            tasks.named(it.getTaskName("createFullJar"))
-        }
-        is AppExtension -> filterByVariant(variant).map {
-            tasks.named(it.getTaskName("bundle", "Classes"))
-        }
+        is LibraryExtension -> filterByVariant(variant).mapNotNull(BaseVariant::createFullJarTaskProvider)
+        is AppExtension -> filterByVariant(variant).mapNotNull(BaseVariant::bundleClassesTaskProvider)
         else -> emptyList()
     }
     isJavaLibrary -> listOf(tasks.named(JavaPlugin.JAR_TASK_NAME))
@@ -172,6 +170,8 @@ private data class ResolvedArtifactResultImpl(
             override fun getAttributes(): AttributeContainer = EmptyAttributes
             override fun getDisplayName(): String = id.displayName
             override fun getCapabilities(): MutableList<Capability> = mutableListOf()
+            override fun getOwner(): ComponentIdentifier = artifactId.componentIdentifier
+            override fun getExternalVariant(): Optional<ResolvedVariantResult> = Optional.empty()
         }
     }
 
@@ -188,4 +188,5 @@ private object EmptyAttributes : AttributeContainer {
     override fun <T : Any?> getAttribute(key: Attribute<T>): T? = null
     override fun isEmpty(): Boolean = true
     override fun contains(key: Attribute<*>): Boolean = false
+    override fun <T : Any?> attributeProvider(key: Attribute<T>, provider: Provider<out T>): AttributeContainer = this
 }

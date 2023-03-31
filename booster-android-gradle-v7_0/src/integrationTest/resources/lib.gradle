@@ -3,7 +3,6 @@ buildscript {
         mavenLocal()
         mavenCentral()
         google()
-        jcenter()
         maven { url 'https://oss.sonatype.org/content/repositories/public/' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
@@ -12,7 +11,7 @@ buildscript {
         classpath("com.didiglobal.booster:booster-gradle-plugin:${project.booster_version}") {
             exclude group: 'com.google.guava'
         }
-        classpath "io.bootstage.testkit:testkit-gradle-plugin:1.1.0"
+        classpath "io.bootstage.testkit:testkit-gradle-plugin:1.4.0"
     }
 }
 
@@ -54,6 +53,5 @@ repositories {
     mavenLocal()
     mavenCentral()
     google()
-    jcenter()
     maven { url 'https://oss.sonatype.org/content/repositories/public/' }
 }
